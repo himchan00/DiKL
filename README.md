@@ -5,8 +5,10 @@ In this paper, we introduce Diffusive KL Divergence (DiKL), a reverse-KL-based d
 ![](./assets/compare_crop.gif)
 
 ## Reproducing results for DiKL and Baselines
+### samples
 We provide samples on MoG-40, MW-32, DW-4, and LJ-13 for our methods and baselines (iDEM, FAB, reverse KL) in the following for rapid reproduction of our results.
 
+### model weights
 
 ## Environment Setup
 
