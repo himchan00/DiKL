@@ -15,11 +15,12 @@ We provide samples on MoG-40, MW-32, DW-4, and LJ-13 for our methods and baselin
 ## Citation
 
 Please cite the following paper if you use this repo:
-'''
+
+```
 @article{he2024training,
   title={Training Neural Samplers with Reverse Diffusive KL Divergence},
   author={He, Jiajun and Chen, Wenlin and Zhang, Mingtian and Barber, David and Hern{\'a}ndez-Lobato, Jos{\'e} Miguel},
   journal={arXiv preprint arXiv:2410.12456},
   year={2024}
 }
-'''
+```
