@@ -5,10 +5,10 @@ Official PyTorch implementation of paper [Training Neural Samplers with Reverse 
 We provide samples on MoG-40, MW-32, DW-4, and LJ-13 for our methods and baselines (iDEM, FAB, reverse KL) in the following for rapid reproduction of our results.
 
 
-## Env
+## Environment Setup
+
 
 ## Training Neural Sampler with DiKL
-
 
 ## Evaluation
 
