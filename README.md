@@ -1,6 +1,7 @@
 # Diffusive KL Divergence (DiKL)
 Official PyTorch implementation of paper [Training Neural Samplers with Reverse Diffusive KL Divergence](https://arxiv.org/abs/2410.12456).
-In this paper, we introduce Diffusive KL Divergence (DiKL), a reverse-KL-based divergence that promotes mode-covering behavior, in contrast to the standard reverse KL, which tends to focus on mode-seeking.
+In this paper, we introduce Diffusive KL Divergence (DiKL), a reverse-KL-based divergence that promotes mode-covering behavior, in contrast to the standard reverse KL, which tends to focus on mode-seeking:
+
 ![](./assets/compare_crop.gif)
 
 ## Reproducing results for DiKL and Baselines
