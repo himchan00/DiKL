@@ -1,0 +1,35 @@
+# target
+name: 'mog'
+e3: False
+n_dim: 2
+
+# diffusive
+Tmin: 1
+Tmax: 30
+start: 1e-5
+end: 0.05
+
+# train
+max_iter: 1500
+check_iter: 1000
+lvm_lr: 5e-4
+score_lr: 1e-4
+batch_size: 128
+grad_norm_clip: 10.0
+grad_estimator: 'msm'
+weight: 'uniform'
+score_iter: 100
+
+# posterior sampling
+boundary: 1000.0
+num_langevin_steps: 1000
+langevin_step_size: 1e-3
+n_is: 500
+AIS_step: 1 # 1 means IS
+smc_gap: null
+hmc_step_size: null
+lg_step: null
+hmc_step: null
+
+#save
+save_path: './save/'
