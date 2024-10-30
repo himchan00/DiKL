@@ -1,0 +1,48 @@
+# target
+name: 'mog'
+e3: true
+n_dim: 3
+n_particles: 13
+
+
+# model
+h_dim: 144
+layer_num: 8
+score_h_dim: 144
+score_layer_num: 8
+
+# diffusive
+Tmin: 1
+Tmax: 30
+start: 1e-6
+end: 0.05
+
+# train
+max_iter: 1500
+check_iter: 50
+lvm_lr: 1e-3
+score_lr: 1e-4
+batch_size: 256
+grad_norm_clip: 10.0
+grad_estimator: 'msm'
+weight: 'uniform'
+score_iter: 100
+early_stop: True
+
+# posterior sampling
+boundary: 1000.0
+num_langevin_steps: 1000
+langevin_step_size: 1e-3
+dynamic_step_size: true
+sample_size: 1000
+n_is: 500
+ais: 
+    AIS_step: 1 # 1 means IS
+    hmc_step_size: null
+    lg_step: null
+    hmc_step: null
+    lg: False
+
+#save and check
+save_path: './save/'
+val_sample_path: 'energy/val_samples/val_split_LJ13-1000.npy' # only for visualization

@@ -1,7 +1,7 @@
 # target
-name: 'mog'
+name: 'mw'
 e3: False
-n_dim: 2
+n_dim: 32
 
 # model
 h_dim: 400
@@ -13,11 +13,11 @@ score_layer_num: 3
 Tmin: 1
 Tmax: 30
 start: 1e-4
-end: 0.5
+end: 0.1
 
 # train
 max_iter: 100000
-check_iter: 1000
+check_iter: 500
 lvm_lr: 1e-3
 score_lr: 1e-4
 batch_size: 1024
@@ -30,13 +30,13 @@ early_stop: false
 # posterior sampling
 boundary: 1000.0
 num_langevin_steps: 5
-langevin_step_size: 1e-2
+langevin_step_size: 5e-2
 dynamic_step_size: false
 sample_size: 1
 n_is: 10
 ais: 
     AIS_step: 15 # 1 means IS
-    hmc_step_size: 1.0
+    hmc_step_size: 0.3
     lg_step: null
     hmc_step: 1.0
     lg: False
