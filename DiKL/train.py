@@ -9,7 +9,7 @@ import argparse
 from tqdm import tqdm
 from types import SimpleNamespace as config
 
-from train_utils import get_network, get_target, get_sample
+from train_utils import get_network, get_target, get_sample, save_plot_and_check
 from models.dm_utils import extract, remove_mean
 from loss import dsm_loss, diKL_loss
 
@@ -63,6 +63,7 @@ def main():
 
     process = lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=opt.n_dim) if opt.e3 else lambda x: x
 
+    best_d = 100
     for it in tqdm(range(1,opt.max_iter+1)):
         # train score network
         lvm.eval()
@@ -91,6 +92,14 @@ def main():
         lvm_optim.step()
 
     # plot and save checkpoints
-    
+    x_samples = get_sample(lvm, opt, True, 2000)
+    d = save_plot_and_check(opt, x_samples, target, plot_file_name=opt.save_path + '/plot/%d.png'%it)
+    if d <= best_d:
+        best_d = d
+        # save ckpt
+        torch.save(lvm.state_dict(), opt.save_path + '/model/' + 'LVM.pt')
+        torch.save(score_model.state_dict(), opt.save_path + '/model/' + 'SCORE.pt')
+        print('TVD %.6f'%d, flush=True)
+        
 if __name__ == '__main__':
     main()

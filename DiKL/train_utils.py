@@ -6,6 +6,8 @@ from energy.mw import *
 from models.mlp import *
 from models.egnn import *
 
+from sampler.ais import LangevinDynamics
+
 def get_target(opt):
     """
     Return target objective.
@@ -102,7 +104,7 @@ def get_network(opt):
 
     return lvm, score_model
 
-def get_sample(lvm, opt, stop_grad):
+def get_sample(lvm, opt, stop_grad, sample_size=None):
     if opt.e3:
         process = lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=3)
         z_dim = opt.n_particles * opt.n_dim
@@ -112,7 +114,7 @@ def get_sample(lvm, opt, stop_grad):
         z_dim = opt.n_dim
         sample = lambda x: lvm(x)
     
-    z = process(torch.randn([opt.batch_size, z_dim], device=opt.device))
+    z = process(torch.randn([opt.batch_size if sample_size == None else sample_size, z_dim], device=opt.device))
     if stop_grad:
         with torch.no_grad():
             x = process(sample(z).detach())
@@ -121,7 +123,7 @@ def get_sample(lvm, opt, stop_grad):
 
     return x
 
-def save_plot(opt, x_samples, plot_file_name, target):
+def save_plot_and_check(opt, x_samples, target, plot_file_name):
     if opt.name == 'mog':
         plot_MoG40(
             log_prob_function=GMM(dim=2, n_mixes=40, loc_scaling=40, log_var_scaling=1, device="cpu").log_prob,
@@ -155,3 +157,31 @@ def save_plot(opt, x_samples, plot_file_name, target):
         plt.savefig(plot_file_name)
         plt.close()
 
+    if opt.early_stop:
+        lg = LangevinDynamics(x_samples.clone().detach(), 
+                                target.energy,
+                                step_size=opt.langevin_step_size,
+                                mh=1,
+                                device=opt.device)
+        for _ in range(50):
+            x_w_lg, acc = lg.sample()
+        d = total_variation_distance(target.energy(x).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
+        return d
+    return 0
+
+
+def total_variation_distance(samples1, samples2, bins=1000):
+    min_ = -100
+    max_ = 100
+    # Create histograms of the two sample sets
+    hist1, bins = np.histogram(samples1, bins=bins, range=(min_, max_), density=True)
+    hist2, _ = np.histogram(samples2, bins=bins, range=(min_, max_), density=True)
+    
+    # Normalize histograms to get probability distributions
+    hist1 = hist1 / np.sum(hist1)
+    hist2 = hist2 / np.sum(hist2)
+    
+    # Calculate the Total Variation distance
+    tv_distance = 0.5 * np.sum(np.abs(hist1 - hist2))
+    
+    return tv_distance
