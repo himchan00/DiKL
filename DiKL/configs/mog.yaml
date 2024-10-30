@@ -3,6 +3,12 @@ name: 'mog'
 e3: False
 n_dim: 2
 
+# model
+h_dim: 
+layer_num: 
+score_h_dim: 
+score_layer_num
+
 # diffusive
 Tmin: 1
 Tmax: 30
@@ -19,17 +25,22 @@ grad_norm_clip: 10.0
 grad_estimator: 'msm'
 weight: 'uniform'
 score_iter: 100
+early_stop: True
 
 # posterior sampling
 boundary: 1000.0
 num_langevin_steps: 1000
 langevin_step_size: 1e-3
+dynamic_step_size: False
+sample_size: 1
 n_is: 500
-AIS_step: 1 # 1 means IS
-smc_gap: null
-hmc_step_size: null
-lg_step: null
-hmc_step: null
+ais: 
+    AIS_step: 1 # 1 means IS
+    smc_gap: null
+    hmc_step_size: null
+    lg_step: null
+    hmc_step: null
+    lg: False
 
 #save
 save_path: './save/'
