@@ -11,7 +11,7 @@ def get_target(opt):
     Return target objective.
     """
     if opt.name == 'mog':
-        target = GMM(dim=2, n_mixes=40,loc_scaling=40, log_var_scaling=1,device=opt.device)
+        target = GMM(dim=2, n_mixes=40,loc_scaling=40, log_var_scaling=1, device=opt.device)
         target.to(opt.device)
     elif opt.name == 'dw':
         class Target(MultiDoubleWellEnergy):
@@ -118,6 +118,40 @@ def get_sample(lvm, opt, stop_grad):
             x = process(sample(z).detach())
     else:
         x = process(sample(z))
-        
+
     return x
+
+def save_plot(opt, x_samples, plot_file_name, target):
+    if opt.name == 'mog':
+        plot_MoG40(
+            log_prob_function=GMM(dim=2, n_mixes=40, loc_scaling=40, log_var_scaling=1, device="cpu").log_prob,
+            samples=x_samples, 
+            file_name=plot_file_name,
+            title=None
+            )
+    if opt.name == 'mw':
+        plot_marginal_paris(target.double_well.log_prob, samples=x_samples, plotting_bounds=(-3, 3), n_contour_levels=40, grid_width_n_points=100, save_dir=plot_file_name)
+    if opt.name in ['dw', 'lj']:
+        plt.rcParams['figure.figsize'] = [12, 4]
+        val_data = np.load(opt.val_data_path)
+
+        plt.subplot(1, 2, 1)
+        gt_energy = target.energy(torch.from_numpy(val_data).to(device=opt.device), break_symmetry=False).detach().cpu().numpy()
+        plt.hist(gt_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='gt sample')
+        model_energy = target.energy(x_samples).detach().cpu().numpy()
+        plt.hist(model_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='model sample')
+        plt.xlim(gt_energy.min().item(), gt_energy.max().item())
+        plt.legend()
+        
+        plt.subplot(1, 2, 2)
+        x = (((val_data.reshape(-1, opt.n_particles, 1, opt.n_dim) - val_data.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
+        diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
+        plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='gt sample')
+        x = (((x_samples.reshape(-1, opt.n_particles, 1, opt.n_dim) - x_samples.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
+        diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
+        plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='model sample')
+        plt.legend()
+
+        plt.savefig(plot_file_name)
+        plt.close()
 

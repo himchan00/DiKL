@@ -10,7 +10,6 @@ class GMM(torch.nn.Module):
     def __init__(self, dim, n_mixes, loc_scaling, log_var_scaling=0.1, seed=0,
                  n_test_set_samples=1000, device="cpu"):
         super(GMM, self).__init__()
-        torch.manual_seed(0)
         self.seed = seed
         torch.manual_seed(seed)
         self.n_mixes = n_mixes
@@ -104,27 +103,12 @@ def plot_contours(log_prob_func,
     if plt_show:
         plt.show()
 
-def setup_quadratic_function(x: torch.Tensor, seed: int = 0):
-    # Useful for porting this problem to non torch libraries.
-    torch.random.manual_seed(seed)
-    # example function that we may want to calculate expectations over
-    x_shift = 2 * torch.randn(x.shape[-1])
-    A = 2 * torch.rand((x.shape[-1], x.shape[-1])).to(x.device)
-    b = torch.rand(x.shape[-1]).to(x.device)
-    torch.seed()  # set back to random number
-    if x.dtype == torch.float64:
-        return x_shift.double(), A.double(), b.double()
-    else:
-        assert x.dtype == torch.float32
-        return x_shift, A, b
-
-
-def plot_MoG40(log_prob_function,samples, save_path, save_name=None,title=None):
-    if save_name is None:
+def plot_MoG40(log_prob_function,samples, file_name=None,title=None):
+    if file_name is None:
         plot_contours(log_prob_function, samples=samples.detach().cpu().numpy(), bounds=(-56,56), n_contour_levels=50, grid_width_n_points=200, device="cpu",title=title,plt_show=True)
     else:
         plot_contours(log_prob_function, samples=samples.detach().cpu().numpy(), bounds=(-56,56), n_contour_levels=50, grid_width_n_points=200, device="cpu",title=title,plt_show=False)
-        plt.savefig(f"""{save_path}/{save_name}.png""")
+        plt.savefig(file_name)
         plt.close()
 
     

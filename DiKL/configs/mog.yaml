@@ -42,5 +42,6 @@ ais:
     hmc_step: null
     lg: False
 
-#save
+#save and check
 save_path: './save/'
+val_sample_path: '' # only for visualization

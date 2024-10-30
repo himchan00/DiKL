@@ -90,6 +90,7 @@ def main():
         torch.nn.utils.clip_grad_norm_(lvm.parameters(), opt.grad_norm_clip)
         lvm_optim.step()
 
-
+    # plot and save checkpoints
+    
 if __name__ == '__main__':
     main()
