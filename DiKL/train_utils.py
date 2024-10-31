@@ -62,7 +62,7 @@ def get_network(opt):
     Return score network and neural sampler
     """
     if opt.name in ['mog', 'mw']:
-        lvm = LVM(opt.x_dim, opt.h_dim, opt.x_dim, opt.layer_num, opt.device).to(opt.device)
+        lvm = LVM(opt.n_dim, opt.h_dim, opt.n_dim, opt.layer_num, opt.device).to(opt.device)
         score_model= DiffusionModel(
                                     x_dim=opt.n_dim,
                                     num_steps=opt.Tmax, 

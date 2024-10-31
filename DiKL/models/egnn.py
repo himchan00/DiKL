@@ -2,7 +2,7 @@
 
 import torch
 import torch.nn as nn
-from dm_utils import make_beta_schedule, remove_mean
+from models.dm_utils import make_beta_schedule, remove_mean
 
 class EGNN_dynamics(nn.Module):
     def __init__(

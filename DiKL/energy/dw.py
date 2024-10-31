@@ -28,7 +28,7 @@ class MultiDoubleWellEnergy(Energy):
                                                         two_event_dims=False,
                                                     )
 
-    def energy(self, x):
+    def energy(self, x, **kwargs):
         x = x.view(-1, self._n_particles * self._n_dims)
         energies = self.multi_double_well.energy(x)
 
@@ -38,7 +38,7 @@ class MultiDoubleWellEnergy(Energy):
         x = torch.Tensor(x)
         return self.energy(x).cpu().numpy()
 
-    def log_prob(self, x):
+    def log_prob(self, x, **kwargs):
         return -self.energy(x)
 
 

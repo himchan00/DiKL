@@ -31,7 +31,7 @@ def diKL_loss(score_model, x, process, opt, target):
     x_t_clone = x_t.detach().clone()
 
     # estimate data score with posterior sampling (AIS/IS/LG/HMC)
-    x_0_init = diffusion_sampler(target_log_p = lambda x: -target.energy(x),
+    x_0_init = diffusion_sampler(target_log_p = lambda x: target.log_prob(x),
                                     ais_steps=opt.ais.AIS_step,
                                     ais_step_size=opt.ais.hmc_step_size,
                                     x_t=x_t_clone,
@@ -43,7 +43,6 @@ def diKL_loss(score_model, x, process, opt, target):
                                     device=opt.device,
                                     resample=True,
                                     verbose=opt.verbose,
-                                    smc_gap=opt.ais.smc_gap,
                                     LG=opt.ais.lg,
                                     lg_step=opt.ais.lg_step,
                                     mean_center=lambda x: process(x)
@@ -56,7 +55,7 @@ def diKL_loss(score_model, x, process, opt, target):
                                             step_size=step_size,
                                             mh=mh,
                                             device=device)
-        langevin_dynamics = denoising_LD_generator(lambda x: target.energy(x, smooth_=True), x_0_init.detach().clone(), x_t.detach().clone(), a, sigma, step_size=opt.langevin_step_size, mh=True, device=opt.device)
+        langevin_dynamics = denoising_LD_generator(lambda x: -target.log_prob(x, smooth_=True), x_0_init.detach().clone(), x_t.detach().clone(), a, sigma, step_size=opt.langevin_step_size, mh=True, device=opt.device)
         Acc = []
         X0s = []
         GRADs = []

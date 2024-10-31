@@ -12,14 +12,15 @@ score_layer_num: 3
 # diffusive
 Tmin: 1
 Tmax: 30
-start: 1e-4
+start: 0.0001
 end: 0.1
+dsm_scheme: 'linear'
 
 # train
 max_iter: 100000
 check_iter: 500
-lvm_lr: 1e-3
-score_lr: 1e-4
+lvm_lr: 0.001
+score_lr: 0.0001
 batch_size: 1024
 grad_norm_clip: 10.0
 grad_estimator: 'msm'
@@ -30,7 +31,7 @@ early_stop: false
 # posterior sampling
 boundary: 1000.0
 num_langevin_steps: 5
-langevin_step_size: 5e-2
+langevin_step_size: 0.05
 dynamic_step_size: false
 sample_size: 1
 n_is: 10
@@ -38,9 +39,10 @@ ais:
     AIS_step: 15 # 1 means IS
     hmc_step_size: 0.3
     lg_step: null
-    hmc_step: 1.0
+    hmc_step: 1
     lg: False
 
 #save and check
 save_path: './save/'
 val_sample_path: '' # only for visualization
+verbose: false

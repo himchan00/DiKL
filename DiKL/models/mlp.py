@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions import Normal
-from dm_utils import make_beta_schedule
+from models.dm_utils import make_beta_schedule
 
 
 class TimeEmbedding(nn.Module):
@@ -34,7 +34,7 @@ class ConditionalLinear(nn.Module):
         return out
         
 class ConditionalModel(nn.Module):
-    def __init__(self, n_steps, x_dim, layer_num=5, h_dim=400,learn_std=False):
+    def __init__(self, x_dim, layer_num=5, h_dim=400,learn_std=False):
         super(ConditionalModel, self).__init__()
 
         input_dim = x_dim
@@ -56,11 +56,7 @@ class ConditionalModel(nn.Module):
             self.out_std = nn.Linear(h_dim, x_dim)
 
     def forward(self, x, y):
-        if self.fourier_layer is not None:
-            x = self.fourier_layer(x)
-        if self.fourier_feature_encoder is not None:
-            x = self.fourier_feature_encoder(x)
-        for lin in self.lins:
+        for lin in self.lins: 
             x = F.silu(lin(x, y))
         x_mu = self.out_mu(x)
         if self.learn_std:
@@ -88,7 +84,7 @@ class DiffusionModel(nn.Module):
         alphas_prod = torch.cumprod(self.alphas, 0)
         self.alphas_bar_sqrt = torch.sqrt(alphas_prod)
         self.one_minus_alphas_bar_sqrt = torch.sqrt(1 - alphas_prod)
-        self.score = ConditionalModel(num_steps, x_dim, layer_num, h_dim)
+        self.score = ConditionalModel(x_dim, layer_num, h_dim)
 
     def forward(self, t, x):
         return self.score(x, t)

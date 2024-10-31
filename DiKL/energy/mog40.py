@@ -46,7 +46,7 @@ class GMM(torch.nn.Module):
     def test_set(self) -> torch.Tensor:
         return self.sample((self.n_test_set_samples, ))
 
-    def log_prob(self, x: torch.Tensor):
+    def log_prob(self, x: torch.Tensor, **kwargs):
         log_prob = self.distribution.log_prob(x)
         mask = torch.zeros_like(log_prob)
         mask[log_prob < -1e4] = - torch.tensor(float("inf"))

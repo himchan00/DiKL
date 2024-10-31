@@ -13,14 +13,15 @@ score_layer_num: 4
 # diffusive
 Tmin: 1
 Tmax: 30
-start: 1e-6
+start: 0.000001
 end: 0.02
+dsm_scheme: 'linear'
 
 # train
 max_iter: 1500
 check_iter: 50
-lvm_lr: 1e-3
-score_lr: 1e-4
+lvm_lr: 0.001
+score_lr: 0.0001
 batch_size: 1024
 grad_norm_clip: 10.0
 grad_estimator: 'msm'
@@ -31,13 +32,13 @@ early_stop: True
 # posterior sampling
 boundary: 1000.0
 num_langevin_steps: 25
-langevin_step_size: 1e-2
+langevin_step_size: 0.01
 dynamic_step_size: true
 sample_size: 1
 n_is: 20
 ais: 
     AIS_step: 10 # 1 means IS
-    hmc_step_size: 1e-2
+    hmc_step_size: 0.01
     lg_step: 1
     hmc_step: null
     lg: true
@@ -45,3 +46,4 @@ ais:
 #save and check
 save_path: './save/'
 val_sample_path: 'val_split_DW4.npy' # only for visualization
+verbose: false

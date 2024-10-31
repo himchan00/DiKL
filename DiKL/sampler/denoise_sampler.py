@@ -1,4 +1,4 @@
-from ais import *
+from sampler.ais import *
 import numpy as np
 import torch
 import tqdm.notebook as tqdm

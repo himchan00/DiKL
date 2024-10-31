@@ -30,15 +30,18 @@ def main():
     np.random.seed(args.seed)
     
     if args.target == 'mog':
-        opt = yaml.safe_load('configs/mog.yaml')
+        cfg = 'configs/mog.yaml'
     elif args.target == 'mw':
-        opt = yaml.safe_load('configs/mw.yaml')
+        cfg = 'configs/mw.yaml'
     elif args.target == 'dw':
-        opt = yaml.safe_load('configs/dw.yaml')
+        cfg = 'configs/dw.yaml'
     elif args.target == 'lj':
-        opt = yaml.safe_load('configs/lj.yaml')
+        cfg = 'configs/lj.yaml'
     else:
         raise NotImplementedError
+    with open(cfg, 'r') as file:
+        opt = config(**yaml.safe_load(file))
+    opt.ais = config(**opt.ais)
     
     # make dir to save results
     opt.device = args.device
@@ -61,7 +64,7 @@ def main():
     lvm_optim = optim.Adam(lvm.parameters(), lr=opt.lvm_lr)
     score_optim = optim.Adam(score_model.parameters(), lr=opt.score_lr)
 
-    process = lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=opt.n_dim) if opt.e3 else lambda x: x
+    process = (lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=opt.n_dim)) if opt.e3 else (lambda x: x)
 
     best_d = 100
     for it in tqdm(range(1,opt.max_iter+1)):
@@ -91,15 +94,16 @@ def main():
         torch.nn.utils.clip_grad_norm_(lvm.parameters(), opt.grad_norm_clip)
         lvm_optim.step()
 
-    # plot and save checkpoints
-    x_samples = get_sample(lvm, opt, True, 2000)
-    d = save_plot_and_check(opt, x_samples, target, plot_file_name=opt.save_path + '/plot/%d.png'%it)
-    if d <= best_d:
-        best_d = d
-        # save ckpt
-        torch.save(lvm.state_dict(), opt.save_path + '/model/' + 'LVM.pt')
-        torch.save(score_model.state_dict(), opt.save_path + '/model/' + 'SCORE.pt')
-        print('TVD %.6f'%d, flush=True)
+        # plot and save checkpoints
+        if it % opt.check_iter == 0 or it == 1:
+            x_samples = get_sample(lvm, opt, True, 2000)
+            d = save_plot_and_check(opt, x_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
+            if d <= best_d:
+                best_d = d
+                # save ckpt
+                torch.save(lvm.state_dict(), opt.proj_path + '/model/' + 'LVM.pt')
+                torch.save(score_model.state_dict(), opt.proj_path + '/model/' + 'SCORE.pt')
+                print('TVD %.6f'%d, flush=True)
         
 if __name__ == '__main__':
     main()

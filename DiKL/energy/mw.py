@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-from mog40 import plot_contours
+from energy.mog40 import plot_contours
 
 class Energy():
     def __init__(self, dim):
@@ -80,7 +80,7 @@ class ManyWellEnergy(Energy):
             dim=0
         ).sum(dim=0)
     
-    def log_prob(self, x):
+    def log_prob(self, x, **kwargs):
         return -self.energy(x) - self.log_Z
     
 
