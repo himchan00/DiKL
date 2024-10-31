@@ -48,3 +48,4 @@ ais:
 save_path: './save/'
 val_sample_path: 'energy/val_samples/val_split_LJ13-1000.npy' # only for visualization
 verbose: false
+eval_samples: 2000

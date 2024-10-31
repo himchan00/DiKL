@@ -47,3 +47,4 @@ ais:
 save_path: './save/'
 val_sample_path: 'val_split_DW4.npy' # only for visualization
 verbose: false
+eval_samples: 2000

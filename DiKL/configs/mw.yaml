@@ -46,3 +46,4 @@ ais:
 save_path: './save/'
 val_sample_path: '' # only for visualization
 verbose: false
+eval_samples: 10000

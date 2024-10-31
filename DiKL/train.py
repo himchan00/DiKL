@@ -96,7 +96,7 @@ def main():
 
         # plot and save checkpoints
         if it % opt.check_iter == 0 or it == 1:
-            x_samples = get_sample(lvm, opt, True, 2000)
+            x_samples = get_sample(lvm, opt, True, opt.eval_samples)
             d = save_plot_and_check(opt, x_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
             if d <= best_d:
                 best_d = d
