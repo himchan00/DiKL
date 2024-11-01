@@ -1,0 +1,5 @@
+bgflow==0.3.0+19.gfbba56f.dirty
+torch==2.1.0
+matplotlib
+numpy
+tqdm
