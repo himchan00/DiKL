@@ -26,7 +26,14 @@ You can also download model weights below:
 - scipy 1.12.0
 - tqdm
 - matplotlib
-- bgflow ([instruction](https://github.com/noegroup/bgflow))
+- bgflow (see instruction below)
+To install bgflow:
+1. Clone [bgflow repository](https://github.com/noegroup/bgflow)
+2. Navigate to the cloned repository folder
+3. Run the installation script:
+```
+python setup.py install
+```
 
 ## Training Neural Sampler with DiKL
 
