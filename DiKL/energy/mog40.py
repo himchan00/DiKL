@@ -88,7 +88,7 @@ def plot_contours(log_prob_func,
         ax.contour(x_points_dim1, x_points_dim2, log_p_x)
 
     if samples is not None:
-        samples = np.clip(samples, bounds[0], bounds[1])
+        samples = np.clip(samples.detach().cpu(), bounds[0], bounds[1])
         ax.scatter(samples[:, plot_marginal_dims[0]], samples[:, plot_marginal_dims[1]], s=s, alpha=alpha)
         ### x,y ticks
         if xy_tick:

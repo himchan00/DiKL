@@ -42,6 +42,8 @@ def main():
     with open(cfg, 'r') as file:
         opt = config(**yaml.safe_load(file))
     opt.ais = config(**opt.ais)
+
+    print("target:", args.target)
     
     # make dir to save results
     opt.device = args.device
