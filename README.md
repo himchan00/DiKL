@@ -26,6 +26,7 @@ You can also download model weights below:
 - tqdm
 - matplotlib
 - bgflow (see instruction below)
+  
 To install bgflow:
 1. Clone [bgflow repository](https://github.com/noegroup/bgflow)
 2. Navigate to the cloned repository folder
