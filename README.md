@@ -37,6 +37,11 @@ python setup.py install
 
 ## Training Neural Sampler with DiKL
 
+To train the neural sampler with DiKL, navigate to folder ```DiKL```, and run
+```
+python train.py --target mog/dw/lj/mw --seed 0 --device cuda
+```
+
 ## Evaluation
 
 ## Citation
