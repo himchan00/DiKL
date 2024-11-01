@@ -1,7 +1,7 @@
 # Training Neural Samplers with Reverse Diffusive KL Divergence (DiKL)
 
 
-[![Paper](https://img.shields.io/badge/paper-arxiv.2410.12456-red)](https://arxiv.org/abs/2410.12456)
+[![Paper](https://img.shields.io/badge/paper-arxiv.2410.12456-B31B1B.svg)](https://arxiv.org/abs/2410.12456)
 
 
 
@@ -36,6 +36,11 @@ python setup.py install
 ```
 
 ## Training Neural Sampler with DiKL
+
+To train the neural sampler with DiKL, navigate to folder ```DiKL```, and run
+```
+python train.py --target mog/dw/lj/mw --seed 0 --device cuda
+```
 
 ## Evaluation
 
