@@ -105,7 +105,8 @@ def main():
                 # save ckpt
                 torch.save(lvm.state_dict(), opt.proj_path + '/model/' + 'LVM.pt')
                 torch.save(score_model.state_dict(), opt.proj_path + '/model/' + 'SCORE.pt')
-                print('TVD %.6f'%d, flush=True)
+                if opt.early_stop:
+                    print('TVD %.6f'%d, flush=True)
         
 if __name__ == '__main__':
     main()

@@ -18,7 +18,7 @@ dsm_scheme: 'linear'
 
 # train
 max_iter: 100000
-check_iter: 1000
+check_iter: 100
 lvm_lr: 0.001
 score_lr: 0.0001
 batch_size: 1024
