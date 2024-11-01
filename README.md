@@ -1,7 +1,7 @@
 # Training Neural Samplers with Reverse Diffusive KL Divergence (DiKL)
 
 
-[![Paper](https://img.shields.io/badge/paper-arxiv.2410.12456-red)](https://arxiv.org/abs/2410.12456)
+[![Paper](https://img.shields.io/badge/paper-arxiv.2410.12456-B31B1B)](https://arxiv.org/abs/2410.12456)
 
 
 
