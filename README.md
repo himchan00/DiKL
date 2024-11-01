@@ -1,10 +1,9 @@
 # Training Neural Samplers with Reverse Diffusive KL Divergence (DiKL)
 
-<div align="center">
 
 [![Paper](https://img.shields.io/badge/paper-arxiv.2410.12456-red)](https://arxiv.org/abs/2410.12456)
 
-</div>
+
 
 Official PyTorch implementation of the paper [Training Neural Samplers with Reverse Diffusive KL Divergence](https://arxiv.org/abs/2410.12456).
 
