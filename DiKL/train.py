@@ -89,7 +89,7 @@ def main():
         lvm_optim.zero_grad()
         x = get_sample(lvm, opt, stop_grad=False)
 
-        lvm_loss = diKL_loss(score_model, x, process, opt, target)
+        lvm_loss, posterior_samples = diKL_loss(score_model, x, process, opt, target)
         if ~(torch.isnan(lvm_loss) | torch.isinf(lvm_loss)):
             lvm_loss.backward()
 
@@ -99,14 +99,14 @@ def main():
         # plot and save checkpoints
         if it % opt.check_iter == 0 or it == 1:
             x_samples = get_sample(lvm, opt, True, opt.eval_samples)
-            d = save_plot_and_check(opt, x_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
+            d = save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
             if d <= best_d:
                 best_d = d
                 # save ckpt
                 torch.save(lvm.state_dict(), opt.proj_path + '/model/' + 'LVM.pt')
                 torch.save(score_model.state_dict(), opt.proj_path + '/model/' + 'SCORE.pt')
                 if opt.early_stop:
-                    print('TVD %.6f'%d, flush=True)
+                    print('Iter %d, '%it, 'TVD %.6f'%d, flush=True)
         
 if __name__ == '__main__':
     main()

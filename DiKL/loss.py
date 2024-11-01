@@ -13,7 +13,7 @@ def dsm_loss(model, x, opt):
     sigma = extract(model.one_minus_alphas_bar_sqrt, t, x)
 
     if opt.e3:
-        e = remove_mean(torch.randn_like(x), n_particles=opt.n_particles, n_dimensions=3)
+        e = remove_mean(torch.randn_like(x), n_particles=opt.n_particles, n_dimensions=opt.n_dim)
     else:
         e = torch.randn_like(x)
 
@@ -33,7 +33,7 @@ def diKL_loss(score_model, x, process, opt, target):
     # estimate data score with posterior sampling (AIS/IS/LG/HMC)
     x_0_init = diffusion_sampler(target_log_p = lambda x: target.log_prob(x),
                                     ais_steps=opt.ais.AIS_step,
-                                    ais_step_size=opt.ais.hmc_step_size,
+                                    ais_step_size=opt.ais.ais_step_size,
                                     x_t=x_t_clone,
                                     bar_alpha_t=a**2,
                                     n_is=opt.n_is,
@@ -72,13 +72,13 @@ def diKL_loss(score_model, x, process, opt, target):
                 opt.langevin_step_size *= 1.5
             elif np.mean(Acc) < 0.5:
                 opt.langevin_step_size /= 1.5
-        if opt.verbose:
-            print('LG ACC %.3f'%acc)
+        # if opt.verbose:
+            print('LG ACC %.3f'%acc, 'Step size %.4f'%opt.langevin_step_size)
     else:
         x_0 = x_0_init
 
-    x_0 = torch.stack(X0s, 0)[-opt.sample_size-1:].mean(0)
-    _target_score = -torch.stack(GRADs, 0)[-opt.sample_size-1:].mean(0)
+    x_0 = torch.stack(X0s, 0)[-opt.sample_size:].mean(0)
+    _target_score = -torch.stack(GRADs, 0)[-opt.sample_size:].mean(0)
 
     if opt.grad_estimator == 'msm':
         target_score = a * (x_0 + _target_score) - x_t
@@ -102,4 +102,4 @@ def diKL_loss(score_model, x, process, opt, target):
     
     score_diff = w*(lvm_score - target_score).detach()
     lvm_loss=(score_diff*x_t).sum(1).mean()
-    return lvm_loss
+    return lvm_loss, X0s[-1]

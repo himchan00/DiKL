@@ -1,5 +1,5 @@
 # target
-name: 'mog'
+name: 'lj'
 e3: true
 n_dim: 3
 n_particles: 13
@@ -39,7 +39,7 @@ sample_size: 1000
 n_is: 500
 ais: 
     AIS_step: 1 # 1 means IS
-    hmc_step_size: null
+    ais_step_size: null
     lg_step: null
     hmc_step: null
     lg: False

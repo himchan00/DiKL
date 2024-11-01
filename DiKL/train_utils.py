@@ -17,12 +17,12 @@ def get_target(opt):
         target.to(opt.device)
     elif opt.name == 'dw':
         class Target(MultiDoubleWellEnergy):
-            def log_prob(self, x):
+            def log_prob(self, x, **kwargs):
                 assert x.shape[-1] == opt.n_particles * opt.n_dim
                 bsz = x.shape[:-1]
                 x = x.reshape(-1, opt.n_particles * opt.n_dim)
                 return super().log_prob(x).squeeze(-1).reshape(*bsz)
-            def energy(self, x):
+            def energy(self, x, **kwargs):
                 assert x.shape[-1] == opt.n_particles * opt.n_dim
                 bsz = x.shape[:-1]
                 x = x.reshape(-1, opt.n_particles * opt.n_dim)
@@ -106,7 +106,7 @@ def get_network(opt):
 
 def get_sample(lvm, opt, stop_grad, sample_size=None):
     if opt.e3:
-        process = lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=3)
+        process = lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=opt.n_dim)
         z_dim = opt.n_particles * opt.n_dim
         sample = lambda x: lvm(None, x)
     else:
@@ -123,7 +123,7 @@ def get_sample(lvm, opt, stop_grad, sample_size=None):
 
     return x
 
-def save_plot_and_check(opt, x_samples, target, plot_file_name):
+def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name):
     if opt.name == 'mog':
         plot_MoG40(
             log_prob_function=GMM(dim=2, n_mixes=40, loc_scaling=40, log_var_scaling=1, device="cpu").log_prob,
@@ -135,13 +135,15 @@ def save_plot_and_check(opt, x_samples, target, plot_file_name):
         plot_marginal_paris(target.double_well.log_prob, samples=x_samples, plotting_bounds=(-3, 3), n_contour_levels=40, grid_width_n_points=100, save_dir=plot_file_name)
     if opt.name in ['dw', 'lj']:
         plt.rcParams['figure.figsize'] = [12, 4]
-        val_data = np.load(opt.val_data_path)
+        val_data = torch.from_numpy(np.load(opt.val_sample_path))
 
         plt.subplot(1, 2, 1)
-        gt_energy = target.energy(torch.from_numpy(val_data).to(device=opt.device), break_symmetry=False).detach().cpu().numpy()
+        gt_energy = target.energy(val_data.to(device=opt.device)).detach().cpu().numpy()
         plt.hist(gt_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='gt sample')
         model_energy = target.energy(x_samples).detach().cpu().numpy()
         plt.hist(model_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='model sample')
+        post_energy = target.energy(posterior_samples).detach().cpu().numpy()
+        plt.hist(post_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='posterior sample')
         plt.xlim(gt_energy.min().item(), gt_energy.max().item())
         plt.legend()
         
@@ -150,6 +152,9 @@ def save_plot_and_check(opt, x_samples, target, plot_file_name):
         diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
         plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='gt sample')
         x = (((x_samples.reshape(-1, opt.n_particles, 1, opt.n_dim) - x_samples.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
+        diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
+        plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='model sample')
+        x = (((posterior_samples.reshape(-1, opt.n_particles, 1, opt.n_dim) - posterior_samples.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
         diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
         plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='model sample')
         plt.legend()
@@ -165,7 +170,7 @@ def save_plot_and_check(opt, x_samples, target, plot_file_name):
                                 device=opt.device)
         for _ in range(50):
             x_w_lg, acc = lg.sample()
-        d = total_variation_distance(target.energy(x).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
+        d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
         return d
     return 0
 

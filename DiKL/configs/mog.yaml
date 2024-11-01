@@ -37,7 +37,7 @@ sample_size: 1
 n_is: 10
 ais: 
     AIS_step: 15 # 1 means IS
-    hmc_step_size: 1.0
+    ais_step_size: 1.0
     lg_step: null
     hmc_step: 1
     lg: False
