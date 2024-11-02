@@ -156,7 +156,7 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
         plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='model sample')
         x = (((posterior_samples.reshape(-1, opt.n_particles, 1, opt.n_dim) - posterior_samples.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
         diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
-        plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='model sample')
+        plt.hist(x[:, diagx[0], diagx[1]].flatten(), 100, density=1, alpha=1, histtype='step', label='posterior sample')
         plt.legend()
 
         plt.savefig(plot_file_name)
