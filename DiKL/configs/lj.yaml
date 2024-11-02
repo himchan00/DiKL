@@ -20,8 +20,8 @@ dsm_scheme: 'linear'
 
 # train
 max_iter: 1500
-check_iter: 50
-lvm_lr: 0.001
+check_iter: 20
+lvm_lr: 0.0005
 score_lr: 0.0001
 batch_size: 256
 grad_norm_clip: 10.0

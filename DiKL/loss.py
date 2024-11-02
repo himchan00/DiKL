@@ -72,7 +72,7 @@ def diKL_loss(score_model, x, process, opt, target):
                 opt.langevin_step_size *= 1.5
             elif np.mean(Acc) < 0.5:
                 opt.langevin_step_size /= 1.5
-        # if opt.verbose:
+        if opt.verbose:
             print('LG ACC %.3f'%acc, 'Step size %.4f'%opt.langevin_step_size)
     else:
         x_0 = x_0_init

@@ -2,6 +2,7 @@ import torch
 import torch.optim as optim
 from torch.distributions import Normal, Gumbel
 import numpy as np
+import random
 
 import os
 import yaml
@@ -19,15 +20,20 @@ def parse_args():
 
     parser.add_argument("--target", type=str, default='mog')
     parser.add_argument("--device", type=str, default='cuda')
-    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--seed", type=int, default=12345)
     args = parser.parse_args()
 
     return args
 
 def main():
     args = parse_args()
-    torch.manual_seed(args.seed)
+
+    random.seed(args.seed)
+    os.environ['PYTHONHASHSEED'] = str(args.seed)
     np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
     
     if args.target == 'mog':
         cfg = 'configs/mog.yaml'
@@ -63,6 +69,7 @@ def main():
     target = get_target(opt)
 
     lvm, score_model = get_network(opt)
+    print(lvm)
     lvm_optim = optim.Adam(lvm.parameters(), lr=opt.lvm_lr)
     score_optim = optim.Adam(score_model.parameters(), lr=opt.score_lr)
 

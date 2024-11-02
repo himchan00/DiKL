@@ -105,9 +105,9 @@ def plot_contours(log_prob_func,
 
 def plot_MoG40(log_prob_function,samples, file_name=None,title=None):
     if file_name is None:
-        plot_contours(log_prob_function, samples=samples.detach().cpu().numpy(), bounds=(-56,56), n_contour_levels=50, grid_width_n_points=200, device="cpu",title=title,plt_show=True)
+        plot_contours(log_prob_function, samples=samples.detach().cpu(), bounds=(-56,56), n_contour_levels=50, grid_width_n_points=200, device="cpu",title=title,plt_show=True)
     else:
-        plot_contours(log_prob_function, samples=samples.detach().cpu().numpy(), bounds=(-56,56), n_contour_levels=50, grid_width_n_points=200, device="cpu",title=title,plt_show=False)
+        plot_contours(log_prob_function, samples=samples.detach().cpu(), bounds=(-56,56), n_contour_levels=50, grid_width_n_points=200, device="cpu",title=title,plt_show=False)
         plt.savefig(file_name)
         plt.close()
 

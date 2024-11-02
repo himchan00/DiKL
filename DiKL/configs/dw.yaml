@@ -14,12 +14,12 @@ score_layer_num: 4
 Tmin: 1
 Tmax: 30
 start: 0.000001
-end: 0.02
+end: 0.03
 dsm_scheme: 'linear'
 
 # train
 max_iter: 2000
-check_iter: 50
+check_iter: 20
 lvm_lr: 0.0005
 score_lr: 0.0001
 batch_size: 1024
