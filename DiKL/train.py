@@ -10,7 +10,7 @@ import argparse
 from tqdm import tqdm
 from types import SimpleNamespace as config
 
-from train_utils import get_network, get_target, get_sample, save_plot_and_check
+from train_utils import get_network, get_target, get_sample, save_plot_and_check, total_variation_distance
 from models.dm_utils import extract, remove_mean
 from loss import dsm_loss, diKL_loss
 
@@ -21,6 +21,7 @@ def parse_args():
     parser.add_argument("--target", type=str, default='mog')
     parser.add_argument("--device", type=str, default='cuda')
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--track_tvd", type=bool, default=False)
     args = parser.parse_args()
 
     return args
@@ -113,6 +114,14 @@ def main():
                 torch.save(score_model.state_dict(), opt.proj_path + '/model/' + 'SCORE.pt')
                 if opt.early_stop:
                     print('Iter %d, '%it, 'TVD %.6f'%d, flush=True)
-        
+            if args.track_tvd:
+                val_data = torch.from_numpy(np.load(opt.val_sample_path))
+                tvd = total_variation_distance(
+                                                target.energy(val_data).detach().cpu().numpy(), 
+                                                target.energy(x_samples).detach().cpu().numpy(), 
+                                                bins=500
+                                               )
+                with open(opt.proj_path + '/tvd.txt', 'a') as f:
+                    f.write(str(tvd) + '\n')
 if __name__ == '__main__':
     main()

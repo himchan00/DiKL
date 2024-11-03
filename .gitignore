@@ -3,4 +3,4 @@ save
 *text.txt
 .ipynb_checkpoints
 __pycache__/
-DiKL/textdw.txt
+*textdw.txt
