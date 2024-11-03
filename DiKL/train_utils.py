@@ -179,10 +179,10 @@ def total_variation_distance(samples1, samples2, bins=1000):
     min_ = -100
     max_ = 100
     # Create histograms of the two sample sets
-    hist1, bins = np.histogram(samples1, bins=bins, range=(min_, max_), density=True)
-    hist2, _ = np.histogram(samples2, bins=bins, range=(min_, max_), density=True)
+    hist1, bins = np.histogram(samples1, bins=bins, range=(min_, max_))
+    hist2, _ = np.histogram(samples2, bins=bins, range=(min_, max_))
 
-    if sum(hist1) / samples1.shape[0] < 0.8: #  in case that the samples are outside [min, max]
+    if sum(hist1) / samples1.shape[0] < 0.6: #  in case that the samples are outside [min, max]
         return 1e10
     
     # Normalize histograms to get probability distributions

@@ -6,16 +6,16 @@ n_particles: 13
 
 
 # model
-h_dim: 144
-layer_num: 8
-score_h_dim: 144
-score_layer_num: 8
+h_dim: 192
+layer_num: 6
+score_h_dim: 192
+score_layer_num: 6
 
 # diffusive
 Tmin: 1
 Tmax: 30
 start: 0.000001
-end: 0.03
+end: 0.05
 dsm_scheme: 'linear'
 
 # train
