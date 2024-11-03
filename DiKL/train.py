@@ -69,7 +69,6 @@ def main():
     target = get_target(opt)
 
     lvm, score_model = get_network(opt)
-    print(lvm)
     lvm_optim = optim.Adam(lvm.parameters(), lr=opt.lvm_lr)
     score_optim = optim.Adam(score_model.parameters(), lr=opt.score_lr)
 

@@ -15,7 +15,7 @@ score_layer_num: 8
 Tmin: 1
 Tmax: 30
 start: 0.000001
-end: 0.05
+end: 0.03
 dsm_scheme: 'linear'
 
 # train

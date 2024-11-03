@@ -170,7 +170,7 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
                                 device=opt.device)
         for _ in range(50):
             x_w_lg, acc = lg.sample()
-        d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
+        d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=1000)
         return d
     return 0
 
@@ -181,6 +181,9 @@ def total_variation_distance(samples1, samples2, bins=1000):
     # Create histograms of the two sample sets
     hist1, bins = np.histogram(samples1, bins=bins, range=(min_, max_), density=True)
     hist2, _ = np.histogram(samples2, bins=bins, range=(min_, max_), density=True)
+
+    if sum(hist1) / samples1.shape[0] < 0.8: #  in case that the samples are outside [min, max]
+        return 1e10
     
     # Normalize histograms to get probability distributions
     hist1 = hist1 / np.sum(hist1)
