@@ -45,6 +45,6 @@ ais:
 
 #save and check
 save_path: './save/'
-val_sample_path: 'energy/val_samples/val_split_DW4.npy' # only for visualization
+val_sample_path: 'energy/val_samples/val_DW4_rerun.npy' # only for visualization
 verbose: false
 eval_samples: 2000

@@ -20,7 +20,7 @@ def parse_args():
 
     parser.add_argument("--target", type=str, default='mog')
     parser.add_argument("--device", type=str, default='cuda')
-    parser.add_argument("--seed", type=int, default=12345)
+    parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
 
     return args
