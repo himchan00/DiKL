@@ -1,4 +1,0 @@
-target: dw
-Iter 20,  TVD 0.944652
-Iter 40,  TVD 0.891721
-Iter 60,  TVD 0.863787
