@@ -144,7 +144,10 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
         plt.hist(model_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='model sample')
         post_energy = target.energy(posterior_samples).detach().cpu().numpy()
         plt.hist(post_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='posterior sample')
-        plt.xlim(gt_energy.min().item(), gt_energy.max().item())
+        if opt.name == 'lj':
+            plt.xlim(-70, 20)
+        if opt.name == 'dw':
+            plt.xlim(-30, 0)
         plt.legend()
         
         plt.subplot(1, 2, 2)
@@ -170,7 +173,7 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
                                 device=opt.device)
         for _ in range(50):
             x_w_lg, acc = lg.sample()
-        d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=1000)
+        d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
         return d
     return 0
 
