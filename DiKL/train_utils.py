@@ -135,19 +135,17 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
         plot_marginal_paris(target.double_well.log_prob, samples=x_samples, plotting_bounds=(-3, 3), n_contour_levels=40, grid_width_n_points=100, save_dir=plot_file_name)
     if opt.name in ['dw', 'lj']:
         plt.rcParams['figure.figsize'] = [12, 4]
+        min, max = (-70, 20) if opt.name == 'lj' else (-30, 0)
         val_data = torch.from_numpy(np.load(opt.val_sample_path))
 
         plt.subplot(1, 2, 1)
         gt_energy = target.energy(val_data.to(device=opt.device)).detach().cpu().numpy()
-        plt.hist(gt_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='gt sample')
+        plt.hist(gt_energy, np.linspace(min, max, 100), density=True, alpha=1, histtype='step', label='gt sample')
         model_energy = target.energy(x_samples).detach().cpu().numpy()
-        plt.hist(model_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='model sample')
+        plt.hist(model_energy, np.linspace(min, max, 100), density=True, alpha=1, histtype='step', label='model sample')
         post_energy = target.energy(posterior_samples).detach().cpu().numpy()
-        plt.hist(post_energy, np.linspace(gt_energy.min().item(), gt_energy.max().item(), 100), density=True, alpha=1, histtype='step', label='posterior sample')
-        if opt.name == 'lj':
-            plt.xlim(-70, 20)
-        if opt.name == 'dw':
-            plt.xlim(-30, 0)
+        plt.hist(post_energy, np.linspace(min, max, 100), density=True, alpha=1, histtype='step', label='posterior sample')
+        plt.xlim(min, max)
         plt.legend()
         
         plt.subplot(1, 2, 2)
