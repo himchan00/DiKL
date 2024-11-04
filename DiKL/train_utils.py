@@ -179,7 +179,8 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
             d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
             return d
         if opt.name == 'lj':
-            d = target.energy(x_samples).mean().item()
+            energy = target.energy(x_samples)
+            d = energy[energy<300].mean().item()
             return d
     return 0
 
