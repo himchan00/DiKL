@@ -75,7 +75,7 @@ def main():
 
     process = (lambda x: remove_mean(x, n_particles=opt.n_particles, n_dimensions=opt.n_dim)) if opt.e3 else (lambda x: x)
 
-    best_d = 100
+    best_metric = 100
     for it in tqdm(range(1,opt.max_iter+1)):
         # train score network
         lvm.eval()
@@ -106,20 +106,20 @@ def main():
         # plot and save checkpoints
         if it % opt.check_iter == 0 or it == 1:
             x_samples = get_sample(lvm, opt, True, opt.eval_samples)
-            d = save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
-            if d <= best_d:
-                best_d = d
+            metric = save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
+            if metric <= best_metric:
+                best_metric = metric
                 # save ckpt
                 torch.save(lvm.state_dict(), opt.proj_path + '/model/' + 'LVM.pt')
                 torch.save(score_model.state_dict(), opt.proj_path + '/model/' + 'SCORE.pt')
                 if opt.early_stop:
-                    print('Iter %d, '%it, 'TVD %.6f'%d, flush=True)
+                    print('Iter %d, '%it, 'Metric %.6f'%metric, flush=True)
             if args.track_tvd:
                 val_data = torch.from_numpy(np.load(opt.val_sample_path))
                 tvd = total_variation_distance(
                                                 target.energy(val_data).detach().cpu().numpy(), 
                                                 target.energy(x_samples).detach().cpu().numpy(), 
-                                                bins=500
+                                                bins=200 # align with that used in iDEM
                                                )
                 with open(opt.proj_path + '/tvd.txt', 'a') as f:
                     f.write(str(tvd) + '\n')

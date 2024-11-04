@@ -32,7 +32,7 @@ early_stop: True
 
 # posterior sampling
 boundary: 1000.0
-num_langevin_steps: 1000
+num_langevin_steps: 1500
 langevin_step_size: 0.001
 dynamic_step_size: true
 sample_size: 1000
@@ -48,4 +48,4 @@ ais:
 save_path: './save/'
 val_sample_path: 'energy/val_samples/val_split_LJ13-1000.npy' # only for visualization
 verbose: false
-eval_samples: 2000
+eval_samples: 5000
