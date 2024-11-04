@@ -171,6 +171,10 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
                                 device=opt.device)
         for _ in range(50):
             x_w_lg, acc = lg.sample()
+            if acc > 0.6:
+                lg.step_size *= 1.5
+            elif acc < 0.5:
+                lg.step_size /= 1.5
         d = total_variation_distance(target.energy(x_samples).detach().cpu().numpy(), target.energy(x_w_lg).detach().cpu().numpy(), bins=500)
         return d
     return 0
