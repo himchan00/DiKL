@@ -45,7 +45,7 @@ ais:
     lg: False
 
 #save and check
-save_path: './save_10/'
+save_path: './save/'
 val_sample_path: 'energy/val_samples/val_split_LJ13-1000.npy' # only for visualization
 verbose: false
 eval_samples: 5000
