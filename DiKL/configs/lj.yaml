@@ -6,9 +6,9 @@ n_particles: 13
 
 
 # model
-h_dim: 144
+h_dim: 192
 layer_num: 8
-score_h_dim: 144
+score_h_dim: 192
 score_layer_num: 8
 
 # diffusive
@@ -19,7 +19,7 @@ end: 0.05
 dsm_scheme: 'linear'
 
 # train
-max_iter: 1500
+max_iter: 3000
 check_iter: 20
 lvm_lr: 0.0005
 score_lr: 0.0001
@@ -32,10 +32,10 @@ early_stop: True
 
 # posterior sampling
 boundary: 1000.0
-num_langevin_steps: 1500
+num_langevin_steps: 1000
 langevin_step_size: 0.001
 dynamic_step_size: true
-sample_size: 1000
+sample_size: 500
 n_is: 500
 ais: 
     AIS_step: 1 # 1 means IS
@@ -45,7 +45,7 @@ ais:
     lg: False
 
 #save and check
-save_path: './save/'
+save_path: './save_10/'
 val_sample_path: 'energy/val_samples/val_split_LJ13-1000.npy' # only for visualization
 verbose: false
 eval_samples: 5000
