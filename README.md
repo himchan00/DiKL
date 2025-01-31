@@ -1,11 +1,11 @@
-# Training Neural Samplers with Reverse Diffusive KL Divergence (DiKL)
+# Training Neural Samplers with Reverse Diffusive KL Divergence (DiKL, AISTATS 2025)
 
 
 [![Paper](https://img.shields.io/badge/paper-arxiv.2410.12456-B31B1B.svg)](https://arxiv.org/abs/2410.12456)
 
 
 
-Official PyTorch implementation of the paper [Training Neural Samplers with Reverse Diffusive KL Divergence](https://arxiv.org/abs/2410.12456).
+Official PyTorch implementation of the paper [Training Neural Samplers with Reverse Diffusive KL Divergence](https://arxiv.org/abs/2410.12456), published at AISTATS 2025.
 
 In this paper, we introduce Diffusive KL Divergence (DiKL), a reverse-KL-based divergence that promotes mode-covering behavior, in contrast to the standard reverse KL, which tends to focus on mode-seeking:
 

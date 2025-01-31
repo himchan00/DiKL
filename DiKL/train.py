@@ -105,6 +105,8 @@ def main():
 
         # plot and save checkpoints
         if it % opt.check_iter == 0 or it == 1:
+            lvm.eval()
+            score_model.eval()
             x_samples = get_sample(lvm, opt, True, opt.eval_samples)
             metric = save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
             if metric <= best_metric:
