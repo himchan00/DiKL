@@ -4,6 +4,7 @@ e3: true
 n_dim: 2
 n_particles: 4
 
+
 # model
 h_dim: 144
 layer_num: 8
@@ -45,6 +46,6 @@ ais:
 
 #save and check
 save_path: './save/'
-val_sample_path: 'energy/val_samples/val_DW4_rerun.npy' # only for visualization
+val_sample_path: 'energy/val_samples/val_DW4_rerun.npy' # only for visualization, so there is no issue for "feature leakage" 
 verbose: false
 eval_samples: 2000

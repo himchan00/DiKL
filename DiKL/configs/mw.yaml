@@ -44,6 +44,6 @@ ais:
 
 #save and check
 save_path: './save/'
-val_sample_path: '' # only for visualization
+val_sample_path: '' # only for visualization, so there is no issue for "feature leakage" 
 verbose: false
 eval_samples: 1000
