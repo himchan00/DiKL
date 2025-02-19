@@ -118,24 +118,6 @@ def main():
                     print('Iter %d, '%it, 'Metric %.6f'%metric, flush=True)
             if args.track_tvd:
                 val_data = torch.from_numpy(np.load(opt.val_sample_path))
-                def total_variation_distance(samples1, samples2, bins=200):
-                    min_ = 0.0
-                    max_ = 8.0
-                    # Create histograms of the two sample sets
-                    hist1, bins = np.histogram(samples1, bins=bins, range=(min_, max_))
-                    hist2, _ = np.histogram(samples2, bins=bins, range=(min_, max_))
-
-                    if sum(hist1) / samples1.shape[0] < 0.6: #  in case that the samples are outside [min, max]
-                        return 1e10
-                    
-                    # Normalize histograms to get probability distributions
-                    hist1 = hist1 / np.sum(hist1)
-                    hist2 = hist2 / np.sum(hist2)
-                    
-                    # Calculate the Total Variation distance
-                    tv_distance = 0.5 * np.sum(np.abs(hist1 - hist2))
-                    
-                    return tv_distance
 
                 x = (((val_data.reshape(-1, opt.n_particles, 1, opt.n_dim) - val_data.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
                 diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
@@ -148,7 +130,9 @@ def main():
                 tvd = total_variation_distance(
                                                 val_data_dist.detach().cpu().numpy(), #target.energy(val_data).detach().cpu().numpy(), 
                                                 last_samples_dist.detach().cpu().numpy(), #target.energy(x_samples).detach().cpu().numpy(), 
-                                                bins=200 # align with that used in iDEM
+                                                bins=200, # align with that used in iDEM,
+                                                min_=0.0,
+                                                max_=8.0
                                                )
                 with open(opt.proj_path + '/tvd.txt', 'a') as f:
                     f.write(str(tvd) + '\n')

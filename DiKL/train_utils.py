@@ -185,9 +185,8 @@ def save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_nam
     return 0
 
 
-def total_variation_distance(samples1, samples2, bins=1000):
-    min_ = -100
-    max_ = 100
+def total_variation_distance(samples1, samples2, bins=1000, min_=-100, max_=100):
+
     # Create histograms of the two sample sets
     hist1, bins = np.histogram(samples1, bins=bins, range=(min_, max_))
     hist2, _ = np.histogram(samples2, bins=bins, range=(min_, max_))
