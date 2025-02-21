@@ -72,26 +72,10 @@ def main():
     val_sample = process(torch.from_numpy(val_sample).to(opt.device))
 
     # load baseline samples
-    try:
-        fab_sample_files = [f for f in os.listdir(opt.baseline_sample_dir) if 'fab' in f]
-        fab_sample = process(torch.load(os.path.join(opt.baseline_sample_dir, fab_sample_files[0])).to(opt.device))
-    except:
-        print('FAB sample not found')
-        fab_sample = None
-
-    try:
-        idem_sample_files = [f for f in os.listdir(opt.baseline_sample_dir) if 'idem' in f]
-        idem_sample = process(torch.load(os.path.join(opt.baseline_sample_dir, idem_sample_files[0])).to(opt.device))
-    except:
-        print('iDEM sample not found')
-        idem_sample = None
-
-    try:
-        kl_sample_files = [f for f in os.listdir(opt.baseline_sample_dir) if 'kl' in f and 'dikl' not in f]
-        kl_sample = process(torch.load(os.path.join(opt.baseline_sample_dir, kl_sample_files[0])).to(opt.device))
-    except:
-        print('KL sample not found')
-        kl_sample = None
+    baselines = os.listdir(opt.baseline_sample_dir)
+    baseline_samples = {}
+    for i in baselines:
+        baseline_samples[i.split('.')[0]] = process(torch.load(os.path.join(opt.baseline_sample_dir, i)).to(opt.device))
 
     # evaluate metrics
     def get_w2_with_bootstrapped_var(samples):
@@ -129,34 +113,14 @@ def main():
             dist_tvd, dist_tvd_std = get_dist_tvd_with_bootstrapped_var(dikl_samples)
             f.write(f'Distance TVD: {dist_tvd} {dist_tvd_std}\n')
 
-        if fab_sample is not None:
-            w2, w2_std = get_w2_with_bootstrapped_var(fab_sample)
-            energy_tvd, energy_tvd_std = get_energy_tvd_with_bootstrapped_var(fab_sample)
-            f.write('FAB:\n')
+        for i in baseline_samples:
+            w2, w2_std = get_w2_with_bootstrapped_var(baseline_samples[i])
+            energy_tvd, energy_tvd_std = get_energy_tvd_with_bootstrapped_var(baseline_samples[i])
+            f.write(f'{i}:\n')
             f.write(f'W2: {w2} {w2_std}\n')
             f.write(f'Energy TVD: {energy_tvd} {energy_tvd_std}\n')
             if opt.e3:
-                dist_tvd, dist_tvd_std = get_dist_tvd_with_bootstrapped_var(dikl_samples)
-                f.write(f'Distance TVD: {dist_tvd} {dist_tvd_std}\n')
-
-        if idem_sample is not None:
-            w2, w2_std = get_w2_with_bootstrapped_var(idem_sample)
-            energy_tvd, energy_tvd_std = get_energy_tvd_with_bootstrapped_var(idem_sample)
-            f.write('iDEM:\n')
-            f.write(f'W2: {w2} {w2_std}\n')
-            f.write(f'Energy TVD: {energy_tvd} {energy_tvd_std}\n')
-            if opt.e3:
-                dist_tvd, dist_tvd_std = get_dist_tvd_with_bootstrapped_var(dikl_samples)
-                f.write(f'Distance TVD: {dist_tvd} {dist_tvd_std}\n')
-        
-        if kl_sample is not None:
-            w2, w2_std = get_w2_with_bootstrapped_var(kl_sample)
-            energy_tvd, energy_tvd_std = get_energy_tvd_with_bootstrapped_var(kl_sample)
-            f.write('KL:\n')
-            f.write(f'W2: {w2} {w2_std}\n')
-            f.write(f'Energy TVD: {energy_tvd} {energy_tvd_std}\n')
-            if opt.e3:
-                dist_tvd, dist_tvd_std = get_dist_tvd_with_bootstrapped_var(dikl_samples)
+                dist_tvd, dist_tvd_std = get_dist_tvd_with_bootstrapped_var(baseline_samples[i])
                 f.write(f'Distance TVD: {dist_tvd} {dist_tvd_std}\n')
 
 
@@ -170,14 +134,9 @@ def main():
         sample_size = 1500
     val_sample = val_sample[np.random.choice(val_sample.shape[0], sample_size, replace=False)]
     dikl_samples = dikl_samples[np.random.choice(dikl_samples.shape[0], sample_size, replace=False)]
-    if fab_sample is not None:
-        fab_sample = fab_sample[np.random.choice(fab_sample.shape[0], sample_size, replace=False)]
-    if idem_sample is not None:
-        idem_sample = idem_sample[np.random.choice(idem_sample.shape[0], sample_size, replace=False)]
-    if kl_sample is not None:
-        kl_sample = kl_sample[np.random.choice(kl_sample.shape[0], sample_size, replace=False)]
+    for i in baseline_samples:
+        baseline_samples[i] = baseline_samples[i][np.random.choice(baseline_samples[i].shape[0], sample_size, replace=False)]
         
-
     # plot 
     plt.rcParams['figure.figsize'] = [5., 1.4]
     plt.subplot(1, 2, 1)
@@ -209,36 +168,27 @@ def main():
                 histtype="step",
                 linewidth=1.4,
                 label="DiKL (ours)",)
-        if fab_sample is not None:
-            fab_energy = target.energy(fab_sample).detach().cpu().numpy()
-            plt.hist(fab_energy, bins=100,
-                    density=True,
-                    alpha=0.7,
-                    range=(min_energy, max_energy),
-                    color="tab:red",
-                    histtype="step",
-                    linewidth=1.4,
-                    label="FAB",)
-        if idem_sample is not None:
-            idem_energy = target.energy(idem_sample).detach().cpu().numpy()
-            plt.hist(idem_energy, bins=100,
-                    density=True,
-                    alpha=0.7,
-                    range=(min_energy, max_energy),
-                    color="tab:orange",
-                    histtype="step",
-                    linewidth=1.4,
-                    label="iDEM",)
-        if kl_sample is not None:
-            kl_energy = target.energy(kl_sample).detach().cpu().numpy()
-            plt.hist(kl_energy, bins=100,
-                    density=True,
-                    alpha=0.7,
-                    range=(min_energy, max_energy),
-                    color="gray",
-                    histtype="step",
-                    linewidth=1.4,
-                    label="KL",)
+        for i in baseline_samples:
+            color = {'FAB': 'tab:red', 'iDEM': 'tab:orange', 'KL': 'gray'}
+            baseline_energy = target.energy(baseline_samples[i]).detach().cpu().numpy()
+            if i in color.keys():
+                plt.hist(baseline_energy, bins=100,
+                        density=True,
+                        alpha=0.7,
+                        range=(min_energy, max_energy),
+                        histtype="step",
+                        linewidth=1.4,
+                        color=color[i],
+                        label=i,)
+            else:
+                plt.hist(baseline_energy, bins=100,
+                        density=True,
+                        alpha=0.7,
+                        range=(min_energy, max_energy),
+                        histtype="step",
+                        linewidth=1.4,
+                        label=i,)
+
     plt.xlabel('Energy')
     plt.ylabel('Density')
     plt.legend(bbox_to_anchor=(2.2, 1.3), ncol=4, fontsize=8.5)
@@ -271,39 +221,29 @@ def main():
                     color="tab:blue",
                     range=(min_dist, max_dist),
                     label="DiKL (ours)",)
-            if fab_sample is not None:
-                fab_dist = get_distance(fab_sample, opt)
-                plt.hist(fab_dist, 
-                        bins=100,
-                        alpha=0.7,
-                        density=True,
-                        histtype="step",
-                        linewidth=1.4,
-                        color="tab:red",
-                        range=(min_dist, max_dist),
-                        label="FAB",)
-            if idem_sample is not None:
-                idem_dist = get_distance(idem_sample, opt)
-                plt.hist(idem_dist, 
-                        bins=100,
-                        alpha=0.7,
-                        density=True,
-                        histtype="step",
-                        linewidth=1.4,
-                        color="tab:orange",
-                        range=(min_dist, max_dist),
-                        label="iDEM",)
-            if kl_sample is not None:
-                kl_dist = get_distance(kl_sample, opt)
-                plt.hist(kl_dist, 
-                        bins=100,
-                        alpha=0.7,
-                        density=True,
-                        histtype="step",
-                        linewidth=1.4,
-                        color="gray",
-                        range=(min_dist, max_dist),
-                        label="KL",)
+            for i in baseline_samples:
+                baseline_dist = get_distance(baseline_samples[i], opt)
+                color = {'FAB': 'tab:red', 'iDEM': 'tab:orange', 'KL': 'gray'}
+                if i in color.keys():
+                    plt.hist(baseline_dist, 
+                            bins=100,
+                            alpha=0.7,
+                            density=True,
+                            histtype="step",
+                            linewidth=1.4,
+                            color=color[i],
+                            range=(min_dist, max_dist),
+                            label=i,)
+                else:
+                    plt.hist(baseline_dist, 
+                            bins=100,
+                            alpha=0.7,
+                            density=True,
+                            histtype="step",
+                            linewidth=1.4,
+                            range=(min_dist, max_dist),
+                            label=i,)
+           
         plt.xlabel("Interatomic Distance")
     plt.savefig(args.save_dir + args.target + '.pdf', bbox_inches = 'tight')
     plt.close()

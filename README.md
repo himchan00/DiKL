@@ -42,7 +42,15 @@ To train the neural sampler with DiKL, navigate to folder ```DiKL```, and run
 python train.py --target mog/dw/lj/mw --device cuda
 ```
 
-## Evaluation (preparing)
+## Evaluation
+
+To evaluate the neural sampler, navigate to folder ```DiKL```, and run
+
+```
+python eval.py --target mog/dw/lj/mw --device cuda --model_path your-dikl-model-path --sample_path your-dikl-sample-path --save_dir path-to-save-results --baseline_sample_dir baseline-samples-folder
+```
+You only need to specify either ```--model_path``` or ```--sample_path```.
+
 
 ## Citation
 
