@@ -15,7 +15,7 @@ score_layer_num: 4
 Tmin: 1
 Tmax: 30
 start: 0.000001
-end: 0.03
+end: 0.05
 dsm_scheme: 'linear'
 
 # train
@@ -32,7 +32,7 @@ early_stop: True
 
 # posterior sampling
 boundary: 1000.0
-num_langevin_steps: 25
+num_langevin_steps: 50
 langevin_step_size: 0.01
 dynamic_step_size: true
 sample_size: 1
@@ -48,4 +48,4 @@ ais:
 save_path: './save/'
 val_sample_path: 'energy/val_samples/val_DW4_rerun.npy' # only for visualization, so there is no issue for "feature leakage" 
 verbose: false
-eval_samples: 2000
+eval_samples: 5000
