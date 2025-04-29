@@ -2,7 +2,7 @@ import numpy as np
 from typing import Union
 import torch
 
-from optimal_transport import wasserstein
+from .optimal_transport import wasserstein
 
 """
 This function modified from iDEM's repo at https://github.com/jarridrb/DEM, released under the MIT license.

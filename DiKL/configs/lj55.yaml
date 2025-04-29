@@ -1,0 +1,52 @@
+# target
+name: 'lj'
+e3: true
+n_dim: 3
+n_particles: 55
+
+
+# model
+h_dim: 192
+layer_num: 8
+score_h_dim: 192
+score_layer_num: 8
+
+# diffusive
+Tmin: 1
+Tmax: 30
+start: 0.000001
+end: 0.05
+dsm_scheme: 'linear'
+
+# train
+max_iter: 3000
+check_iter: 20
+lvm_lr: 0.0005
+score_lr: 0.0001
+batch_size: 64 # 256 for lj13, lowered due to memory issue
+grad_norm_clip: 10.0
+grad_estimator: 'msm'
+weight: 'uniform'
+score_iter: 100
+early_stop: True
+
+# posterior sampling
+boundary: 1000.0
+num_langevin_steps: 1000
+langevin_step_size: 0.001
+dynamic_step_size: true
+sample_size: 500
+n_is: 500
+ais: 
+    AIS_step: 1 # 1 means IS
+    ais_step_size: null
+    lg_step: null
+    hmc_step: null
+    lg: False
+
+#save and check
+save_path: './save/'
+val_sample_path: 'energy/val_samples/val_LJ55_2000.npy' 
+verbose: false
+eval_batch_size: 200
+eval_samples: 2000

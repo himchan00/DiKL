@@ -10,7 +10,8 @@ import argparse
 from tqdm import tqdm
 from types import SimpleNamespace as config
 
-from train_utils import get_network, get_target, get_sample, save_plot_and_check, total_variation_distance
+from train_utils import get_network, get_target, get_sample, save_plot_and_check
+from evaluation.metric import total_variation_distance, get_distance
 from models.dm_utils import extract, remove_mean
 from loss import dsm_loss, diKL_loss
 
@@ -44,6 +45,8 @@ def main():
         cfg = 'configs/dw.yaml'
     elif args.target == 'lj':
         cfg = 'configs/lj.yaml'
+    elif args.target == 'lj55':
+        cfg = 'configs/lj55.yaml'
     else:
         raise NotImplementedError
     with open(cfg, 'r') as file:
@@ -107,33 +110,23 @@ def main():
         if it % opt.check_iter == 0 or it == 1:
             lvm.eval()
             score_model.eval()
-            x_samples = get_sample(lvm, opt, True, opt.eval_samples)
-            metric = save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
-            if metric <= best_metric:
-                best_metric = metric
+            n_batchs = opt.eval_samples // opt.eval_batch_size
+            dikl_samples = []
+            for _ in range(n_batchs):
+                x = get_sample(lvm, opt, True, opt.eval_batch_size)
+                dikl_samples.append(x)
+            x_samples = torch.cat(dikl_samples, dim=0)
+            save_plot_and_check(opt, x_samples, posterior_samples, target, plot_file_name=opt.proj_path + '/plot/%d.png'%it)
+            val_data = torch.from_numpy(np.load(opt.val_sample_path))
+            val_data_dist = get_distance(val_data, opt).detach().cpu().numpy()
+            x_samples_dist = get_distance(x_samples, opt).detach().cpu().numpy()
+            tvd = total_variation_distance(x_samples_dist, val_data_dist, bins=200)
+            if tvd <= best_metric:
+                best_metric = tvd
                 # save ckpt
-                torch.save(lvm.state_dict(), opt.proj_path + '/model/' + 'LVM.pt')
-                torch.save(score_model.state_dict(), opt.proj_path + '/model/' + 'SCORE.pt')
-                if opt.early_stop:
-                    print('Iter %d, '%it, 'Metric %.6f'%metric, flush=True)
-            if args.track_tvd:
-                val_data = torch.from_numpy(np.load(opt.val_sample_path))
-
-                x = (((val_data.reshape(-1, opt.n_particles, 1, opt.n_dim) - val_data.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
-                diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
-                val_data_dist = x[:, diagx[0], diagx[1]].flatten()
-                 
-                x = (((x_samples.reshape(-1, opt.n_particles, 1, opt.n_dim) - x_samples.reshape(-1, 1, opt.n_particles, opt.n_dim))**2).sum(-1).sqrt()).cpu()
-                diagx = torch.triu_indices(x.shape[1], x.shape[1], 1)
-                last_samples_dist = x[:, diagx[0], diagx[1]].flatten()
-
-                tvd = total_variation_distance(
-                                                val_data_dist.detach().cpu().numpy(), #target.energy(val_data).detach().cpu().numpy(), 
-                                                last_samples_dist.detach().cpu().numpy(), #target.energy(x_samples).detach().cpu().numpy(), 
-                                                bins=200, # align with that used in iDEM,
-                                                min_=0.0,
-                                                max_=8.0
-                                               )
+                torch.save(lvm.state_dict(), opt.proj_path + '/model/' + f'LVM.pt')
+                torch.save(score_model.state_dict(), opt.proj_path + '/model/' + f'SCORE.pt')
+                print('Iter %d, '%it, 'Best TVD-D %.6f'%tvd, flush=True)
                 with open(opt.proj_path + '/tvd.txt', 'a') as f:
                     f.write(str(tvd) + '\n')
 if __name__ == '__main__':
