@@ -46,6 +46,7 @@ ais:
 
 #save and check
 save_path: './save/'
-val_sample_path: 'energy/val_samples/val_split_LJ13-1000.npy' # only for visualization, so there is no issue for "feature leakage" 
+val_sample_path: 'energy/val_samples/val_LJ13_2000.npy' # only for visualization, so there is no issue for "feature leakage" 
 verbose: false
-eval_samples: 5000
+eval_samples: 2000
+eval_batch_size: 2000
