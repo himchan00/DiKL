@@ -57,13 +57,13 @@ def main():
     
     # make dir to save results
     opt.device = args.device
-    opt.proj_path = opt.save_path + opt.name
+    opt.proj_path = opt.save_path + args.target
 
     if os.path.exists(opt.proj_path):
         counter = 1
         # Loop until a non-existing path is found
         while os.path.exists(opt.proj_path):
-            opt.proj_path = opt.save_path + opt.name + f"_{counter}"
+            opt.proj_path = opt.save_path + args.target + f"_{counter}"
             counter += 1
 
     os.makedirs(opt.proj_path, exist_ok=True)

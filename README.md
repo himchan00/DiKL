@@ -1,3 +1,26 @@
+# VGS Baseline Experiment (Added)
+
+## Training
+
+To train the model, run the following command:
+
+```shell
+python train.py --target dw/lj/lj55 --device cuda:0
+```
+The model checkpoint with the lowest validation TVD will be saved to:
+```bash
+./save/{target}/model/LVM.pt
+```
+For example: `./save/dw/model/LVM.pt`
+
+## Sample Generation
+After training, you can generate and save 10k samples using the following command:
+
+```shell
+python generate.py --target dw/lj/lj55 --proj_path ./save/{dw/lj/lj55} --device cuda:0
+```
+The generated samples will be saved in the project path as: `{target}_samples.npy`
+
 # Training Neural Samplers with Reverse Diffusive KL Divergence (DiKL, AISTATS 2025)
 
 
