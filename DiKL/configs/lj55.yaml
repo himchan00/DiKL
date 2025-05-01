@@ -46,7 +46,7 @@ ais:
 
 #save and check
 save_path: './save/'
-val_sample_path: 'energy/val_samples/val_LJ55_2000.npy' 
+val_sample_path: 'energy/val_samples/val_LJ55_1000.npy' 
 verbose: false
 eval_batch_size: 200
-eval_samples: 2000
+eval_samples: 1000
